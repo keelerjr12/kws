@@ -27,6 +27,7 @@ set(CMAKE_CXX_CLANG_TIDY clang-tidy -checks=-*,bugprone-*,cert-*,clang-analyzer-
 add_executable(${PROJECT_NAME} 
   ${SOURCE_DIR}/main.cpp 
   ${SOURCE_DIR}/http_server.cpp 
+  ${SOURCE_DIR}/http.cpp 
   ${SOURCE_DIR}/tcp_stream.cpp 
 )
 

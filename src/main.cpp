@@ -9,9 +9,9 @@ const auto PORT = 8080;
 int main() {
 
   std::cout << "Starting server\n";
-  Keeler::HttpServer http(HOST, PORT);
+  KWS::HttpServer http(HOST, PORT);
 
-  http.RegisterHandler(Keeler::HttpMethod::GET, "/", [](const Keeler::HttpRequest& req) {
+  http.RegisterHandler(KWS::HttpMethod::GET, "/", [](const KWS::HttpRequest& req) {
     std::cout << "---- REQUEST START  ----\n";
     std::cout << ToString(req.Method()) << " " << req.URI() << " " << req.Version() <<  std::endl;
     std::cout << req.Header("Host") << std::endl;
@@ -24,7 +24,7 @@ int main() {
       </body>             \
     </html>";
 
-    return Keeler::HttpResponse{resp};
+    return KWS::HttpResponse {resp};
   });
 
   std::cout << "Listening on " << HOST << " " << PORT << "\n";

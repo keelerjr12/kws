@@ -4,7 +4,7 @@
 #include <string>
 #include <string_view>
 
-namespace Keeler {
+namespace KWS {
 
   class TcpStream {
    public:

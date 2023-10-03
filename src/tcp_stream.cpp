@@ -6,7 +6,7 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 
-namespace Keeler {
+namespace KWS {
 
   TcpStream::TcpStream(int sockfd) : sockfd_(sockfd) { }
 
