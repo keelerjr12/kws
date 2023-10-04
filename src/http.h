@@ -14,7 +14,6 @@ namespace KWS {
     DELETE
   };
 
-  std::string toUpper(std::string str);
   HttpMethod ToHttpMethod(const std::string& str);
   std::string ToString(HttpMethod method);
 

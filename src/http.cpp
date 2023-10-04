@@ -6,6 +6,14 @@
 
 namespace KWS {
 
+  static const std::unordered_map<std::string, HttpMethod> method_map = {
+    {"GET", HttpMethod::GET},
+    {"POST", HttpMethod::POST},
+    {"PUT", HttpMethod::PUT},
+    {"DELETE", HttpMethod::DELETE}
+  };
+
+  // TODO: move this to a utility class
   std::string toUpper(std::string str) {
     std::transform(std::begin(str), std::end(str), std::begin(str), [](unsigned char chr) {
         return std::toupper(chr);
@@ -13,13 +21,6 @@ namespace KWS {
 
     return str;
   }
-
-  static const std::unordered_map<std::string, HttpMethod> method_map = {
-    {"GET", HttpMethod::GET},
-    {"POST", HttpMethod::POST},
-    {"PUT", HttpMethod::PUT},
-    {"DELETE", HttpMethod::DELETE}
-  };
 
   HttpMethod ToHttpMethod(const std::string& str) {
     auto method_it = method_map.find(toUpper(str));
