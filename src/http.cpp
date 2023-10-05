@@ -41,8 +41,12 @@ namespace KWS {
     throw std::invalid_argument("Method cannot be converted to a string");
   }
 
-  HttpRequest::HttpRequest(HttpMethod method, const std::string& uri) : 
-      method_(method), uri_(uri) { }
+  bool operator==(const HttpRoute& lhs, const HttpRoute& rhs) {
+    return lhs.Method() == rhs.Method() && lhs.URI() == rhs.URI();
+  }
+
+  HttpRequest::HttpRequest(HttpMethod method, std::string uri) : 
+      method_(method), uri_(std::move(uri)) { }
 
   HttpRequest HttpRequest::ParseFrom(TcpStream& stream) {
     HttpRequest req;
@@ -101,7 +105,7 @@ namespace KWS {
     }
   }
 
-  HttpResponse::HttpResponse(const std::string& content) : content_(content) { }
+  HttpResponse::HttpResponse(std::string content) : content_(std::move(content)) { }
 
   std::string HttpResponse::Serialize() const {
     std::string resp;

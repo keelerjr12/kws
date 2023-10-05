@@ -8,14 +8,17 @@ const auto HOST = "127.0.0.1";
 const auto PORT = 8080;
 
 KWS::HttpResponse IndexHandler(const KWS::HttpRequest& req);
+KWS::HttpResponse ErrorHandler(const KWS::HttpRequest& req);
 
 int main() {
 
   std::cout << "Starting server\n";
-  KWS::HttpServer<KWS::HttpRequest, KWS::HttpResponse> http(HOST, PORT);
+  KWS::HttpServer http(HOST, PORT);
 
   http.RegisterRoute({KWS::HttpMethod::GET, "/"}, IndexHandler); 
   http.RegisterRoute({KWS::HttpMethod::GET, "/api"}, IndexHandler);
+
+  http.RegisterErrorHandler(KWS::HttpStatusCode::BAD_REQUEST, ErrorHandler);
 
   std::cout << "Listening on " << HOST << " " << PORT << "\n";
   http.Serve();
@@ -39,4 +42,8 @@ KWS::HttpResponse IndexHandler(const KWS::HttpRequest& req) {
   </html>";
 
   return {resp};
+}
+
+KWS::HttpResponse ErrorHandler(const KWS::HttpRequest& req) {
+  return {"404: Bad request!"};
 }

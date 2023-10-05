@@ -14,6 +14,12 @@ namespace KWS {
     DELETE
   };
 
+  // TODO: do i need this?
+  enum class HttpStatusCode {
+    BAD_REQUEST = 200,
+    OK = 400
+  };
+
   HttpMethod ToHttpMethod(const std::string& str);
   std::string ToString(HttpMethod method);
 
@@ -40,7 +46,7 @@ namespace KWS {
   class HttpRequest {
    public:
     HttpRequest() = default;
-    HttpRequest(HttpMethod method, const std::string& uri);
+    HttpRequest(HttpMethod method, std::string uri);
 
     static HttpRequest ParseFrom(TcpStream& stream);
 
@@ -62,7 +68,7 @@ namespace KWS {
 
   class HttpResponse {
    public:
-     HttpResponse(const std::string& content);
+     HttpResponse(std::string content);
 
      std::string Serialize() const;
 

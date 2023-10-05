@@ -25,6 +25,8 @@ namespace KWS {
 
       TcpStream tcp_strm {clientfd};
       HandleClient(tcp_strm);
+
+      close(clientfd);
     }
   }
 

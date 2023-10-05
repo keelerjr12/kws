@@ -1,7 +1,6 @@
 #ifndef TCP_SERVER_H
 #define TCP_SERVER_H
 
-
 namespace KWS {
 
   class TcpStream;

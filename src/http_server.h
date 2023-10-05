@@ -2,48 +2,41 @@
 #define HTTP_SERVER_H
 
 #include "http.h"
-#include "tcp_stream.h"
 #include "tcp_server.h"
 #include <functional>
 #include <stdexcept>
 
 namespace KWS {
 
-  template<class Request, class Response>
+  class HttpRequest;
+  class HttpResponse;
+  class HttpRoute;
+  class TcpStream;
+
   class HttpServer : public TcpServer {
 
    public:
-    HttpServer(const char* host, int port) : TcpServer(host, port) { }
 
-    void RegisterRoute(const HttpRoute& route, const std::function<Response(const Request&)> & handler) {
-      auto route_it = handlers_.find(route);
+    using Handler = std::function<HttpResponse(const HttpRequest&)>;
 
-      if (route_it != std::end(handlers_)) {
-        throw std::invalid_argument("[Error]: HttpRoute already exists\n");
-      }
+    HttpServer(const char* host, int port);
 
-      handlers_.insert({route, handler});
-    }
+    void RegisterRoute(const HttpRoute& route, Handler handler);
+    void RegisterErrorHandler(HttpStatusCode code, Handler handler);
 
    protected:
 
-    void HandleClient(TcpStream& strm) override {
-      auto req = Request::ParseFrom(strm);
-
-      const auto route_handler_it = handlers_.find({req.Method(), req.URI()});
-
-      if (route_handler_it == std::end(handlers_)) {
-        throw std::invalid_argument("[Error]: HttpRoute does not exist\n");
-      }
-
-      const auto resp = route_handler_it->second(req);
-
-      strm.Send(resp.Serialize());
-    }
+    void HandleClient(TcpStream& strm) override;
 
    private:
 
-    std::unordered_map<HttpRoute, std::function<Response(const Request&)>> handlers_;
+    bool HandlerExists(const HttpRoute& route) const;
+
+    Handler GetHandler(const HttpRoute& route) const;
+    Handler GetErrorHandler(HttpStatusCode code) const;
+
+    std::unordered_map<HttpRoute, std::function<HttpResponse(const HttpRequest&)>> handlers_;
+    std::unordered_map<HttpStatusCode, std::function<HttpResponse(const HttpRequest&)>> error_handlers_;
   };
 
 }
