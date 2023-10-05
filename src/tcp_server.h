@@ -1,9 +1,10 @@
 #ifndef TCP_SERVER_H
 #define TCP_SERVER_H
 
-#include "tcp_stream.h"
 
 namespace KWS {
+
+  class TcpStream;
 
   class TcpServer {
    public:

@@ -17,6 +17,26 @@ namespace KWS {
   HttpMethod ToHttpMethod(const std::string& str);
   std::string ToString(HttpMethod method);
 
+  class HttpRoute {
+   public:
+
+    HttpRoute(HttpMethod method, const std::string& uri) : method_(method), uri_(uri) { }
+
+    HttpMethod Method() const {
+      return method_;
+    }
+
+    std::string URI() const {
+      return uri_;
+    }
+
+   private:
+    HttpMethod method_;
+    std::string uri_;
+  };
+
+  bool operator==(const HttpRoute& lhs, const HttpRoute& rhs);
+
   class HttpRequest {
    public:
     HttpRequest() = default;
@@ -48,6 +68,22 @@ namespace KWS {
 
    private:
      std::string content_;
+  };
+
+}
+
+namespace std {
+
+  template <>
+  struct hash<KWS::HttpRoute> {
+
+    size_t operator()(const KWS::HttpRoute& route) const noexcept {
+      const auto method_hash_fn = hash<int>{};
+      const auto uri_hash_fn = hash<std::string>{};
+      
+      return method_hash_fn((int)route.Method()) ^ uri_hash_fn(route.URI());
+    }
+
   };
 
 }

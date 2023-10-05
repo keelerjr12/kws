@@ -1,5 +1,6 @@
 #include "http.h"
 #include "http_server.h"
+#include <functional>
 #include <iostream>
 
 const auto LISTEN_BACKLOG = 50;
@@ -13,8 +14,8 @@ int main() {
   std::cout << "Starting server\n";
   KWS::HttpServer<KWS::HttpRequest, KWS::HttpResponse> http(HOST, PORT);
 
-  http.RegisterHandler(KWS::HttpMethod::GET, "/", IndexHandler); 
-  http.RegisterHandler(KWS::HttpMethod::GET, "/api", IndexHandler); 
+  http.RegisterRoute({KWS::HttpMethod::GET, "/"}, IndexHandler); 
+  http.RegisterRoute({KWS::HttpMethod::GET, "/api"}, IndexHandler);
 
   std::cout << "Listening on " << HOST << " " << PORT << "\n";
   http.Serve();
@@ -37,5 +38,5 @@ KWS::HttpResponse IndexHandler(const KWS::HttpRequest& req) {
     </body>             \
   </html>";
 
-  return KWS::HttpResponse {resp};
+  return {resp};
 }
