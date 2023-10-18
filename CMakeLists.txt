@@ -1,10 +1,10 @@
-set(PROJECT_NAME "kws")
+set(LIB_NAME "kws")
 set(SOURCE_DIR "src")
 set(TEST_DIR "tests")
 set(DATA_DIR "data")
 
 cmake_minimum_required(VERSION 3.26)
-project(${PROJECT_NAME})
+project(${LIB_NAME})
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
@@ -24,35 +24,32 @@ set(CMAKE_CXX_CLANG_TIDY clang-tidy -checks=-*,bugprone-*,cert-*,clang-analyzer-
 #set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 #FetchContent_MakeAvailable(googletest)
 
-add_executable(${PROJECT_NAME} 
-  ${SOURCE_DIR}/main.cpp 
-  ${SOURCE_DIR}/tcp_server.cpp 
-  ${SOURCE_DIR}/tcp_stream.cpp 
-  ${SOURCE_DIR}/http_server.cpp 
-  ${SOURCE_DIR}/http.cpp 
-)
+add_library(${LIB_NAME} STATIC "")
 
-#target_link_libraries(${PROJECT_NAME} PUBLIC gmp gmpxx mpfr)
+add_subdirectory(${SOURCE_DIR})
 
-#add_executable(
-#  ${PROJECT_NAME}_tests
-#  ${TEST_DIR}/numeric/precise_number_test.cpp
-#  ${SOURCE_DIR}/numeric/precise_number.cpp 
-#  ${TEST_DIR}/kinematics/velocity_test.cpp
-#  ${SOURCE_DIR}/kinematics/velocity.cpp 
-#)
-#
+#target_link_libraries(${LIB_NAME} PUBLIC gmp gmpxx mpfr)
+
 #target_link_libraries(
-#  ${PROJECT_NAME}_tests
+#  ${LIB_NAME}_tests
 #  PUBLIC GTest::gtest_main gmp gmpxx mpfr
 #)
 #
 #include(GoogleTest)
-#gtest_discover_tests(${PROJECT_NAME}_tests)
+#gtest_discover_tests(${LIB_NAME}_tests)
 
-target_compile_options(${PROJECT_NAME} INTERFACE
+target_compile_options(${LIB_NAME} INTERFACE
   "$<${GCC_LIKE_CXX}:-g;-Wall;-Werror;-pedantic;-Wextra;-Wshadow;-Wsign-conversion;-Wunused>"
   "$<${MSVC_LIKE_CXX}:-W3>"
 )
+
+include(GNUInstallDirs)
+
+install(DIRECTORY inc/
+        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${LIB_NAME}
+        FILES_MATCHING
+        PATTERN "*.h"
+      )
+
 
 #file(COPY ${DATA_DIR} DESTINATION ${CMAKE_BINARY_DIR})

@@ -1,9 +1,10 @@
-#include "http.h"
-#include "http_server.h"
-#include <functional>
+#include <exception>
 #include <iostream>
+#include <kws/http_request.h>
+#include <kws/http_response.h>
+#include <kws/http_route.h>
+#include <kws/http_server.h>
 
-const auto LISTEN_BACKLOG = 50;
 const auto HOST = "127.0.0.1";
 const auto PORT = 8080;
 
@@ -12,18 +13,22 @@ KWS::HttpResponse ErrorHandler(const KWS::HttpRequest& req);
 
 int main() {
 
-  std::cout << "Starting server\n";
-  KWS::HttpServer http(HOST, PORT);
+  try {
+    std::cout << "Starting server\n";
+    KWS::HttpServer http(HOST, PORT);
 
-  http.RegisterRoute({KWS::HttpMethod::GET, "/"}, IndexHandler); 
-  http.RegisterRoute({KWS::HttpMethod::GET, "/api"}, IndexHandler);
+    http.RegisterRoute({KWS::HttpMethod::GET, "/"}, IndexHandler); 
+    http.RegisterRoute({KWS::HttpMethod::GET, "/api"}, IndexHandler);
 
-  http.RegisterErrorHandler(KWS::HttpStatusCode::BAD_REQUEST, ErrorHandler);
+    http.RegisterErrorHandler(KWS::HttpStatusCode::BAD_REQUEST, ErrorHandler);
 
-  std::cout << "Listening on " << HOST << " " << PORT << "\n";
-  http.Serve();
+    std::cout << "Listening on " << HOST << " " << PORT << "\n";
+    http.Serve();
 
-  std::cout << "Shutting down server\n";
+    std::cout << "Shutting down server\n";
+  } catch (const std::exception& exp) {
+    std::cout << exp.what() << '\n';
+  }
 
   return 0;
 }

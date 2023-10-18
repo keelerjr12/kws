@@ -1,10 +1,14 @@
 #include "http_server.h"
-#include "http.h"
+#include "http_request.h"
+#include "http_response.h"
+#include "http_route.h"
+#include "tcp_server.h"
+#include "tcp_stream.h"
+#include <stdexcept>
 
 namespace KWS {
 
-  HttpServer::HttpServer(const char* host, int port) : TcpServer(host, port) {
-  }
+  HttpServer::HttpServer(const char* host, int port) : TcpServer(host, port) { }
 
   void HttpServer::RegisterRoute(const HttpRoute& route, Handler handler) {
     if (HandlerExists(route)) {

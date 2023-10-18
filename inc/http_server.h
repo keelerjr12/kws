@@ -1,16 +1,16 @@
 #ifndef HTTP_SERVER_H
 #define HTTP_SERVER_H
 
-#include "http.h"
-#include "tcp_server.h"
 #include <functional>
-#include <stdexcept>
+#include <unordered_map>
+#include "http_route.h"
+#include "http_status_code.h"
+#include "tcp_server.h"
 
 namespace KWS {
 
   class HttpRequest;
   class HttpResponse;
-  class HttpRoute;
   class TcpStream;
 
   class HttpServer : public TcpServer {
@@ -31,6 +31,7 @@ namespace KWS {
    private:
 
     bool HandlerExists(const HttpRoute& route) const;
+    bool ErrorHandlerExists(HttpStatusCode code) const;
 
     Handler GetHandler(const HttpRoute& route) const;
     Handler GetErrorHandler(HttpStatusCode code) const;
