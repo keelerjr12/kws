@@ -1,11 +1,11 @@
-#ifndef HTTP_SERVER_H
-#define HTTP_SERVER_H
+#ifndef HTTP_SERVER_IMPL_H
+#define HTTP_SERVER_IMPL_H
 
 #include <functional>
 #include <unordered_map>
 #include "http_route.h"
 #include "http_status_code.h"
-#include "tcp_server.h"
+#include "../tcp/tcp_server.h"
 
 namespace KWS {
 
@@ -13,13 +13,13 @@ namespace KWS {
   class HttpResponse;
   class TcpStream;
 
-  class HttpServer : public TcpServer {
+  class HttpServerImpl : public TcpServer {
 
    public:
 
     using Handler = std::function<HttpResponse(const HttpRequest&)>;
 
-    HttpServer(const char* host, int port);
+    HttpServerImpl(const char* host, int port);
 
     void RegisterRoute(const HttpRoute& route, Handler handler);
     void RegisterErrorHandler(HttpStatusCode code, Handler handler);
@@ -36,10 +36,10 @@ namespace KWS {
     Handler GetHandler(const HttpRoute& route) const;
     Handler GetErrorHandler(HttpStatusCode code) const;
 
-    std::unordered_map<HttpRoute, std::function<HttpResponse(const HttpRequest&)>> handlers_;
-    std::unordered_map<HttpStatusCode, std::function<HttpResponse(const HttpRequest&)>> error_handlers_;
+    std::unordered_map<HttpRoute, Handler> handlers_;
+    std::unordered_map<HttpStatusCode, Handler> error_handlers_;
   };
 
 }
 
-#endif // HTTP_SERVER_H
+#endif // HTTP_SERVER_IMPL_H

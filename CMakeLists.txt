@@ -45,6 +45,12 @@ target_compile_options(${LIB_NAME} INTERFACE
 
 include(GNUInstallDirs)
 
+include_directories(inc/)
+
+install(TARGETS ${LIB_NAME}
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+      )
+
 install(DIRECTORY inc/
         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${LIB_NAME}
         FILES_MATCHING

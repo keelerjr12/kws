@@ -2,12 +2,9 @@
 #define HTTP_ROUTE_H
 
 #include <string>
-#include <unordered_map>
 #include "http_method.h"
 
 namespace KWS {
-
-  class TcpStream;
 
   class HttpRoute {
    public:
@@ -36,7 +33,7 @@ namespace std {
   template <>
   struct hash<KWS::HttpRoute> {
 
-    size_t operator()(const KWS::HttpRoute& route) const noexcept {
+    size_t operator()(const KWS::HttpRoute& route) const {
       const auto method_hash_fn = hash<int>{};
       const auto uri_hash_fn = hash<std::string>{};
       
