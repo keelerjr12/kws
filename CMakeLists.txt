@@ -1,7 +1,8 @@
 set(LIB_NAME "kws")
 set(SOURCE_DIR "src")
-set(TEST_DIR "tests")
 set(DATA_DIR "data")
+
+option(BUILD_TESTS "Enable test building; users may want to turn this OFF.)" ON)
 
 cmake_minimum_required(VERSION 3.26)
 project(${LIB_NAME})
@@ -15,28 +16,7 @@ set(MSVC_LIKE_CXX "$<COMPILE_LANG_AND_ID:CXX,MSVC>")
 
 set(CMAKE_CXX_CLANG_TIDY clang-tidy -checks=-*,bugprone-*,cert-*,clang-analyzer-*,cppcoreguidelines-*,-cppcoreguidelines-pro-type-reinterpret-cast,hicpp-*,modernize-*,-modernize-use-trailing-return-type,performance-*,readability-*)
 
-#include(FetchContent)
-#FetchContent_Declare(
-#  googletest
-#  URL https://github.com/google/googletest/archive/03597a01ee50ed33e9dfd640b249b4be3799d395.zip
-#)
-## For Windows: Prevent overriding the parent project's compiler/linker settings
-#set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-#FetchContent_MakeAvailable(googletest)
-
-add_library(${LIB_NAME} STATIC "")
-
-add_subdirectory(${SOURCE_DIR})
-
-#target_link_libraries(${LIB_NAME} PUBLIC gmp gmpxx mpfr)
-
-#target_link_libraries(
-#  ${LIB_NAME}_tests
-#  PUBLIC GTest::gtest_main gmp gmpxx mpfr
-#)
-#
-#include(GoogleTest)
-#gtest_discover_tests(${LIB_NAME}_tests)
+add_library(${LIB_NAME} SHARED "")
 
 target_compile_options(${LIB_NAME} INTERFACE
   "$<${GCC_LIKE_CXX}:-g;-Wall;-Werror;-pedantic;-Wextra;-Wshadow;-Wsign-conversion;-Wunused>"
@@ -57,5 +37,33 @@ install(DIRECTORY inc/
         PATTERN "*.h"
       )
 
+if (BUILD_TESTS)
+  message(STATUS "Testing is on")
 
+  enable_testing()
+  set(TEST_PROJ "tests")
+
+  include(FetchContent)
+  FetchContent_Declare(
+    googletest
+    URL https://github.com/google/googletest/archive/03597a01ee50ed33e9dfd640b249b4be3799d395.zip
+  )
+
+  # For Windows: Prevent overriding the parent project's compiler/linker settings
+  set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+  FetchContent_MakeAvailable(googletest)
+
+  add_executable(${TEST_PROJ} "")
+
+  target_link_libraries(
+    ${TEST_PROJ}
+    kws
+    GTest::gtest_main
+  )
+
+  include(GoogleTest)
+  gtest_discover_tests(${TEST_PROJ})
+endif()
+
+add_subdirectory(${SOURCE_DIR})
 #file(COPY ${DATA_DIR} DESTINATION ${CMAKE_BINARY_DIR})

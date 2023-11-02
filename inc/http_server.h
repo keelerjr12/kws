@@ -19,7 +19,7 @@ namespace KWS {
     using Handler = std::function<HttpResponse(const HttpRequest&)>;
 
     HttpServer(const char* host, int port);
-    virtual ~HttpServer();
+    virtual ~HttpServer() = default;
 
     void Serve();
 

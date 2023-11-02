@@ -6,8 +6,8 @@
 
 namespace KWS {
 
-  HttpRequest::HttpRequest(HttpMethod method, std::string uri) : 
-      method_(method), uri_(std::move(uri)) { }
+  HttpRequest::HttpRequest(HttpMethod method, std::string path) : 
+      method_(method), path_(std::move(path)) { }
 
   HttpRequest HttpRequest::ParseFrom(TcpStream& stream) {
     HttpRequest req;
@@ -22,8 +22,8 @@ namespace KWS {
     return method_;
   }
 
-  std::string HttpRequest::URI() const {
-    return uri_;
+  std::string HttpRequest::Path() const {
+    return path_;
   }
 
   std::string HttpRequest::Version() const {
@@ -45,7 +45,7 @@ namespace KWS {
     std::istringstream iss {request_line};
     std::string method;
 
-    iss >> method >> req.uri_ >> req.version_;
+    iss >> method >> req.path_ >> req.version_;
 
     req.method_ = ToHttpMethod(method);
   }

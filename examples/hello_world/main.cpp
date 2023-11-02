@@ -18,7 +18,8 @@ int main() {
     KWS::HttpServer http(HOST, PORT);
 
     http.RegisterRoute({KWS::HttpMethod::GET, "/"}, IndexHandler); 
-    http.RegisterRoute({KWS::HttpMethod::GET, "/api"}, IndexHandler);
+    http.RegisterRoute({KWS::HttpMethod::GET, "/users/{id}"}, IndexHandler);
+    http.RegisterRoute({KWS::HttpMethod::GET, "/users/{id}/profile"}, IndexHandler);
 
     http.RegisterErrorHandler(KWS::HttpStatusCode::BAD_REQUEST, ErrorHandler);
 
@@ -35,7 +36,7 @@ int main() {
 
 KWS::HttpResponse IndexHandler(const KWS::HttpRequest& req) {
   std::cout << "---- REQUEST START  ----\n";
-  std::cout << ToString(req.Method()) << " " << req.URI() << " " << req.Version() <<  std::endl;
+  std::cout << ToString(req.Method()) << " " << req.Path() << " " << req.Version() <<  std::endl;
   std::cout << req.Header("Host") << std::endl;
   std::cout << "---- REQUEST END  ----\n";
 

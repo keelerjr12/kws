@@ -9,19 +9,19 @@ namespace KWS {
   class HttpRoute {
    public:
 
-    HttpRoute(HttpMethod method, const std::string& uri) : method_(method), uri_(uri) { }
+    HttpRoute(HttpMethod method, const std::string& path) : method_(method), path_(path) { }
 
     HttpMethod Method() const {
       return method_;
     }
 
-    std::string URI() const {
-      return uri_;
+    std::string Path() const {
+      return path_;
     }
 
    private:
     HttpMethod method_;
-    std::string uri_;
+    std::string path_;
   };
 
   bool operator==(const HttpRoute& lhs, const HttpRoute& rhs);
@@ -37,7 +37,7 @@ namespace std {
       const auto method_hash_fn = hash<int>{};
       const auto uri_hash_fn = hash<std::string>{};
       
-      return method_hash_fn((int)route.Method()) ^ uri_hash_fn(route.URI());
+      return method_hash_fn((int)route.Method()) ^ uri_hash_fn(route.Path());
     }
 
   };

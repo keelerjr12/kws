@@ -2,15 +2,15 @@
 #define HTTP_SERVER_IMPL_H
 
 #include <functional>
-#include <unordered_map>
-#include "http_route.h"
 #include "http_status_code.h"
 #include "../tcp/tcp_server.h"
+#include "router.h"
 
 namespace KWS {
 
   class HttpRequest;
   class HttpResponse;
+  class HttpRoute;
   class TcpStream;
 
   class HttpServerImpl : public TcpServer {
@@ -29,15 +29,8 @@ namespace KWS {
     void HandleClient(TcpStream& strm) override;
 
    private:
+    Router router;
 
-    bool HandlerExists(const HttpRoute& route) const;
-    bool ErrorHandlerExists(HttpStatusCode code) const;
-
-    Handler GetHandler(const HttpRoute& route) const;
-    Handler GetErrorHandler(HttpStatusCode code) const;
-
-    std::unordered_map<HttpRoute, Handler> handlers_;
-    std::unordered_map<HttpStatusCode, Handler> error_handlers_;
   };
 
 }
