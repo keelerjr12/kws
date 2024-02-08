@@ -1,22 +1,21 @@
 #ifndef HTTP_SERVER_IMPL_H
 #define HTTP_SERVER_IMPL_H
 
-#include <functional>
-#include "http_status_code.h"
 #include "../tcp/tcp_server.h"
+#include "http_status_code.h"
 #include "router.h"
+#include <functional>
 
 namespace KWS {
 
-  class HttpRequest;
-  class HttpResponse;
-  class HttpRoute;
-  class TcpStream;
+class HttpRequest;
+class HttpResponse;
+class HttpRoute;
+class TcpStream;
 
-  class HttpServerImpl : public TcpServer {
-
-   public:
-
+class HttpServerImpl : public TcpServer
+{
+  public:
     using Handler = std::function<HttpResponse(const HttpRequest&)>;
 
     HttpServerImpl(const char* host, int port);
@@ -24,15 +23,13 @@ namespace KWS {
     void RegisterRoute(const HttpRoute& route, Handler handler);
     void RegisterErrorHandler(HttpStatusCode code, Handler handler);
 
-   protected:
-
+  protected:
     void HandleClient(TcpStream& strm) override;
 
-   private:
+  private:
     Router router;
+};
 
-  };
+}  // namespace KWS
 
-}
-
-#endif // HTTP_SERVER_IMPL_H
+#endif  // HTTP_SERVER_IMPL_H

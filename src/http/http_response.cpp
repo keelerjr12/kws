@@ -4,14 +4,18 @@
 
 namespace KWS {
 
-  HttpResponse::HttpResponse(HttpStatusCode statusCode, std::string body) : 
-    statusCode_(statusCode), body_(std::move(body)) { }
+HttpResponse::HttpResponse(HttpStatusCode statusCode, std::string body)
+  : statusCode_(statusCode)
+  , body_(std::move(body))
+{}
 
-  HttpStatusCode HttpResponse::Status() const {
+HttpStatusCode HttpResponse::Status() const
+{
     return statusCode_;
-  }
+}
 
-  std::string HttpResponse::Serialize() const {
+std::string HttpResponse::Serialize() const
+{
     std::string resp;
     resp += "HTTP/1.1 200 OK\r\n";
     resp += "Content-Type: text/html\r\n";
@@ -19,6 +23,6 @@ namespace KWS {
     resp += body_;
 
     return resp;
-  }
-
 }
+
+}  // namespace KWS
