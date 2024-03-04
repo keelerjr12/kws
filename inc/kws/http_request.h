@@ -7,10 +7,11 @@
 
 namespace KWS {
 
-  class TcpStream;
+class TcpStream;
 
-  class HttpRequest {
-   public:
+class HttpRequest
+{
+  public:
     HttpRequest() = default;
     HttpRequest(HttpMethod method, std::string path);
 
@@ -21,7 +22,7 @@ namespace KWS {
     std::string Version() const;
     std::string Header(const std::string& header) const;
 
-   private:
+  private:
     static void ParseRequestLine(HttpRequest& req, TcpStream& stream);
     static void ParseHeaders(HttpRequest& req, TcpStream& stream);
 
@@ -30,8 +31,8 @@ namespace KWS {
     std::string version_;
 
     std::unordered_map<std::string, std::string> headers_;
-  };
+};
 
-}
+}  // namespace KWS
 
-#endif // HTTP_REQUEST_H
+#endif  // HTTP_REQUEST_H
