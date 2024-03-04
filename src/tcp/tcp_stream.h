@@ -1,27 +1,33 @@
 #ifndef TCP_STREAM
 #define TCP_STREAM
 
+#include <optional>
 #include <string>
 #include <string_view>
 
 namespace KWS {
 
-  class TcpStream {
-   public:
-
+class TcpStream
+{
+  public:
     TcpStream(int sockfd);
 
     std::string ReceiveLine();
 
     void Send(std::string_view data) const;
 
-   private:
+  private:
+    std::optional<std::string> FindExistingLine();
+    std::string ReadDataUntilLineFound();
 
     int sockfd_;
     std::string msg_;
     std::string::size_type last_pos_ = 0;
-  };
 
-}
+    constexpr static auto MESSAGE_DELIM = std::string("\r\n");
+    constexpr static auto BUF_SIZE = 512;
+};
 
-#endif // TCP_STREAM
+}  // namespace KWS
+
+#endif  // TCP_STREAM

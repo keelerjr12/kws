@@ -1,4 +1,5 @@
-target_sources(${LIB_NAME} PRIVATE
+target_sources(${LIB_NAME} PUBLIC
+  http_server_impl.h
   http_server_impl.cpp
   http_method.cpp
   http_request.cpp

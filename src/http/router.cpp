@@ -1,10 +1,9 @@
 #include "router.h"
-#include "http_request.h"
-#include "http_response.h"
-#include "http_route.h"
+#include "../infrastructure/logger.h"
+#include <kws/http_request.h>
+#include <kws/http_response.h>
+#include <kws/http_route.h>
 #include <stdexcept>
-
-#include <iostream>
 
 namespace KWS {
 
@@ -12,7 +11,9 @@ HttpResponse Router::Execute(const HttpRequest& req) const
 {
     if (!HandlerExists({req.Method(), req.Path()}))
     {
-        throw std::runtime_error("HTTP route does not exist");
+        LOG_DEBUG(ToString(req.Method()) + " " + req.Path() + " not found");
+        return HttpResponse{HttpStatusCode::NOT_FOUND,
+                            "404 -- Resource Not Found"};
     }
 
     const auto handler = GetHandler({req.Method(), req.Path()});
@@ -108,7 +109,7 @@ bool AreEqual(const std::vector<std::string>& lhs,
         return false;
     }
 
-    for (auto i = 0; i < lhs.size(); ++i)
+    for (std::size_t i = 0; i < lhs.size(); ++i)
     {
         if (IsParameter(rhs[i]))
         {

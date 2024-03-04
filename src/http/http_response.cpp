@@ -1,12 +1,11 @@
-#include "http_response.h"
+#include <kws/http_response.h>
 #include <kws/http_status_code.h>
 #include <string>
 
 namespace KWS {
 
 HttpResponse::HttpResponse(HttpStatusCode statusCode, std::string body)
-  : statusCode_(statusCode)
-  , body_(std::move(body))
+  : body_(std::move(body)), statusCode_(statusCode)
 {}
 
 HttpStatusCode HttpResponse::Status() const

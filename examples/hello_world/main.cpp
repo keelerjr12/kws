@@ -11,45 +11,53 @@ const auto PORT = 8080;
 KWS::HttpResponse IndexHandler(const KWS::HttpRequest& req);
 KWS::HttpResponse ErrorHandler(const KWS::HttpRequest& req);
 
-int main() {
+int main()
+{
+    try
+    {
+        std::cout << "Starting server\n";
+        KWS::HttpServer http(HOST, PORT);
 
-  try {
-    std::cout << "Starting server\n";
-    KWS::HttpServer http(HOST, PORT);
+        http.RegisterRoute({KWS::HttpMethod::GET, "/"}, IndexHandler);
+        http.RegisterRoute({KWS::HttpMethod::GET, "/users/{id}"}, IndexHandler);
+        http.RegisterRoute({KWS::HttpMethod::GET, "/users/{id}/profile"},
+                           IndexHandler);
 
-    http.RegisterRoute({KWS::HttpMethod::GET, "/"}, IndexHandler); 
-    http.RegisterRoute({KWS::HttpMethod::GET, "/users/{id}"}, IndexHandler);
-    http.RegisterRoute({KWS::HttpMethod::GET, "/users/{id}/profile"}, IndexHandler);
+        http.RegisterErrorHandler(KWS::HttpStatusCode::BAD_REQUEST,
+                                  ErrorHandler);
 
-    http.RegisterErrorHandler(KWS::HttpStatusCode::BAD_REQUEST, ErrorHandler);
+        std::cout << "Listening on " << HOST << " " << PORT << "\n";
+        http.Serve();
 
-    std::cout << "Listening on " << HOST << " " << PORT << "\n";
-    http.Serve();
+        std::cout << "Shutting down server\n";
+    }
+    catch (const std::exception& exp)
+    {
+        std::cout << exp.what() << '\n';
+    }
 
-    std::cout << "Shutting down server\n";
-  } catch (const std::exception& exp) {
-    std::cout << exp.what() << '\n';
-  }
-
-  return 0;
+    return 0;
 }
 
-KWS::HttpResponse IndexHandler(const KWS::HttpRequest& req) {
-  std::cout << "---- REQUEST START  ----\n";
-  std::cout << ToString(req.Method()) << " " << req.Path() << " " << req.Version() <<  std::endl;
-  std::cout << req.Header("Host") << std::endl;
-  std::cout << "---- REQUEST END  ----\n";
+KWS::HttpResponse IndexHandler(const KWS::HttpRequest& req)
+{
+    std::cout << "---- REQUEST START  ----\n";
+    std::cout << ToString(req.Method()) << " " << req.Path() << " "
+              << req.Version() << std::endl;
+    std::cout << req.Header("Host") << std::endl;
+    std::cout << "---- REQUEST END  ----\n";
 
-  std::string resp = "  \
+    std::string resp = "  \
   <html>                \
     <body>              \
       <p>Test Page</p>  \
     </body>             \
   </html>";
 
-  return {resp};
+    return {KWS::HttpStatusCode::OK, resp};
 }
 
-KWS::HttpResponse ErrorHandler(const KWS::HttpRequest& req) {
-  return {"404: Bad request!"};
+KWS::HttpResponse ErrorHandler([[maybe_unused]] const KWS::HttpRequest& req)
+{
+    return {KWS::HttpStatusCode::BAD_REQUEST, "404: Bad request!"};
 }

@@ -1,12 +1,9 @@
 #include "router.h"
-#include "http_method.h"
-#include "http_request.h"
-#include "http_response.h"
-#include "http_status_code.h"
 #include <gtest/gtest.h>
-
-// need to delete this!
-#include <iostream>
+#include <kws/http_method.h>
+#include <kws/http_request.h>
+#include <kws/http_response.h>
+#include <kws/http_status_code.h>
 #include <stdexcept>
 
 namespace {

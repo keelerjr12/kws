@@ -3,23 +3,21 @@
 
 namespace KWS {
 
-  class TcpStream;
+class TcpStream;
 
-  class TcpServer {
-   public:
-
+class TcpServer
+{
+  public:
     TcpServer(const char* host, int port);
 
     virtual ~TcpServer();
 
     void Serve();
 
-   protected:
-    
+  protected:
     virtual void HandleClient(TcpStream& strm) = 0;
 
-   private:
-
+  private:
     void Bind();
     void Listen(int backlog) const;
     int Accept() const;
@@ -27,8 +25,8 @@ namespace KWS {
     const char* host_;
     int port_;
     int sockfd_;
-  };
+};
 
-}
+}  // namespace KWS
 
-#endif // TCP_SERVER_H
+#endif  // TCP_SERVER_H

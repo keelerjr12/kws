@@ -1,6 +1,6 @@
-#include "http_request.h"
+#include <kws/http_request.h>
+#include <kws/http_method.h>
 #include "../tcp/tcp_stream.h"
-#include "http_method.h"
 #include <sstream>
 #include <stdexcept>
 

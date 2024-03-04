@@ -1,8 +1,6 @@
-#include "http_server.h"
-#include "../tcp/tcp_server.h"
+#include <kws/http_server.h>
 #include "http_server_impl.h"
 #include <memory>
-#include <stdexcept>
 
 namespace KWS {
 
@@ -10,9 +8,7 @@ HttpServer::HttpServer(const char* host, int port)
   : impl_(std::make_unique<HttpServerImpl>(host, port))
 {}
 
-/*HttpServer::~HttpServer() {
-    // Empty to allow the use of unique_ptr with incomplete type
-  }*/
+HttpServer::~HttpServer() = default;
 
 void HttpServer::Serve()
 {

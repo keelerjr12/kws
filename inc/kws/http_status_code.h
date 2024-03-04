@@ -5,8 +5,9 @@ namespace KWS {
   
   // TODO: do i need this?
   enum class HttpStatusCode {
-    BAD_REQUEST = 200,
-    OK = 400
+    OK = 200,
+    BAD_REQUEST = 400,
+    NOT_FOUND = 404
   };
 
 }
