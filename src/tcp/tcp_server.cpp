@@ -2,6 +2,7 @@
 #include "tcp_stream.h"
 #include <arpa/inet.h>
 #include <stdexcept>
+#include <string>
 #include <unistd.h>
 
 namespace KWS {
@@ -10,8 +11,8 @@ const auto LISTEN_BACKLOG = 50;
 
 static int CreateSocket();
 
-TcpServer::TcpServer(const char* host, int port)
-  : host_(host)
+TcpServer::TcpServer(const std::string host, int port)
+  : host_(std::move(host))
   , port_(port)
   , sockfd_(CreateSocket())
 {}
@@ -41,7 +42,7 @@ void TcpServer::Bind()
 {
     sockaddr_in sai = {};
     sai.sin_family = AF_INET;
-    inet_pton(AF_INET, host_, &sai.sin_addr.s_addr);
+    inet_pton(AF_INET, host_.c_str(), &sai.sin_addr.s_addr);
     sai.sin_port = htons(port_);
 
     int reuse = 1;

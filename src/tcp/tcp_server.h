@@ -1,6 +1,8 @@
 #ifndef TCP_SERVER_H
 #define TCP_SERVER_H
 
+#include <string>
+
 namespace KWS {
 
 class TcpStream;
@@ -8,7 +10,7 @@ class TcpStream;
 class TcpServer
 {
   public:
-    TcpServer(const char* host, int port);
+    TcpServer(const std::string host, int port);
 
     virtual ~TcpServer();
 
@@ -22,7 +24,7 @@ class TcpServer
     void Listen(int backlog) const;
     int Accept() const;
 
-    const char* host_;
+    std::string host_;
     int port_;
     int sockfd_;
 };
