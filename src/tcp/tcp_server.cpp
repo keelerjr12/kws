@@ -1,94 +1,30 @@
 #include "tcp_server.h"
+#include "tcp_socket.h"
 #include "tcp_stream.h"
-#include <arpa/inet.h>
-#include <stdexcept>
 #include <string>
-#include <unistd.h>
 
-namespace KWS {
+namespace KWS::TCP {
 
 const auto LISTEN_BACKLOG = 50;
 
-static int CreateSocket();
-
-TcpServer::TcpServer(const std::string host, int port)
-  : host_(std::move(host))
+TcpServer::TcpServer(const std::string& host, int port)
+  : host_(host)
   , port_(port)
-  , sockfd_(CreateSocket())
+  , servSock(CreateSocket())
 {}
-
-TcpServer::~TcpServer()
-{
-    close(sockfd_);
-}
 
 void TcpServer::Serve()
 {
-    Bind();
-    Listen(LISTEN_BACKLOG);
+    servSock.Bind(host_, port_);
+    servSock.Listen(LISTEN_BACKLOG);
 
     while (true)
     {
-        const int clientfd = Accept();
+        const auto clientSock = servSock.Accept();
 
-        TcpStream tcp_strm{clientfd};
+        TcpStream tcp_strm{clientSock};
         HandleClient(tcp_strm);
-
-        close(clientfd);
     }
 }
 
-void TcpServer::Bind()
-{
-    sockaddr_in sai = {};
-    sai.sin_family = AF_INET;
-    inet_pton(AF_INET, host_.c_str(), &sai.sin_addr.s_addr);
-    sai.sin_port = htons(port_);
-
-    int reuse = 1;
-    setsockopt(sockfd_, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(reuse));
-
-    const auto err_code =
-        bind(sockfd_, reinterpret_cast<sockaddr*>(&sai), sizeof(sai));
-    if (err_code == -1)
-    {
-        throw std::runtime_error("[ERROR]: Unable to bind to socket");
-    }
-}
-
-void TcpServer::Listen(int backlog) const
-{
-    const auto err_code = listen(sockfd_, backlog);
-
-    if (err_code == -1)
-    {
-        throw std::runtime_error("[ERROR]: Unable to listen on socket");
-    }
-}
-
-int TcpServer::Accept() const
-{
-    struct sockaddr peer_addr = {};
-    socklen_t peer_addr_sz = sizeof(peer_addr);
-
-    auto clientfd = accept(sockfd_, &peer_addr, &peer_addr_sz);
-    if (clientfd == -1)
-    {
-        throw std::runtime_error("[ERROR]: Unable to accept connection");
-    }
-
-    return clientfd;
-}
-
-static int CreateSocket()
-{
-    const auto sockfd = socket(AF_INET, SOCK_STREAM, 0);
-    if (sockfd == -1)
-    {
-        throw std::runtime_error("[ERROR]: Unable to open socket");
-    }
-
-    return sockfd;
-}
-
-}  // namespace KWS
+}  // namespace KWS::TCP

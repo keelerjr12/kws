@@ -1,18 +1,19 @@
 #ifndef TCP_SERVER_H
 #define TCP_SERVER_H
 
+#include "tcp_socket.h"
 #include <string>
 
-namespace KWS {
+namespace KWS::TCP {
 
 class TcpStream;
 
 class TcpServer
 {
   public:
-    TcpServer(const std::string host, int port);
+    TcpServer(const std::string& host, int port);
 
-    virtual ~TcpServer();
+    virtual ~TcpServer() = default;
 
     void Serve();
 
@@ -20,15 +21,12 @@ class TcpServer
     virtual void HandleClient(TcpStream& strm) = 0;
 
   private:
-    void Bind();
-    void Listen(int backlog) const;
-    int Accept() const;
-
     std::string host_;
     int port_;
-    int sockfd_;
+
+    TcpSocket servSock;
 };
 
-}  // namespace KWS
+}  // namespace KWS::TCP
 
 #endif  // TCP_SERVER_H

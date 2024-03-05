@@ -2,15 +2,14 @@
 #include "../infrastructure/logger.h"
 #include <arpa/inet.h>
 #include <array>
-#include <stdexcept>
 #include <string>
 #include <string_view>
 #include <unistd.h>
 
-namespace KWS {
+namespace KWS::TCP {
 
-TcpStream::TcpStream(int sockfd)
-  : sockfd_(sockfd)
+TcpStream::TcpStream(const TcpSocket& socket)
+  : socket_(socket)
 {}
 
 std::string TcpStream::ReceiveLine()
@@ -26,7 +25,7 @@ std::string TcpStream::ReceiveLine()
 
 void TcpStream::Send(std::string_view data) const
 {
-    send(sockfd_, data.data(), data.size(), 0);
+    socket_.Send(data);
 }
 
 std::optional<std::string> TcpStream::FindExistingLine()
@@ -57,14 +56,8 @@ std::string TcpStream::ReadDataUntilLineFound()
 
     while (true)
     {
-        const auto bytes_recv = recv(sockfd_, buf.data(), BUF_SIZE, 0);
-
-        if (bytes_recv < 0)
-        {
-            throw std::runtime_error("[ERROR]: Socket closed");
-        }
-
-        msg_.append(buf.data(), static_cast<std::size_t>(bytes_recv));
+        const auto bytes_recv = socket_.Read(buf);
+        msg_.append(buf.data(), bytes_recv);
 
         if (auto line = FindExistingLine())
         {
@@ -77,4 +70,4 @@ std::string TcpStream::ReadDataUntilLineFound()
     return {};
 }
 
-}  // namespace KWS
+}  // namespace KWS::TCP

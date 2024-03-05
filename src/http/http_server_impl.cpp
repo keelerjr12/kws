@@ -25,7 +25,7 @@ void HttpServerImpl::RegisterErrorHandler(HttpStatusCode code, Handler handler)
     LOG_DEBUG("Registered error handler for " + std::to_string(static_cast<int>(code)));
 }
 
-void HttpServerImpl::HandleClient(TcpStream& strm)
+void HttpServerImpl::HandleClient(TCP::TcpStream& strm)
 {
     auto req = HttpRequest::ParseFrom(strm);
     LOG_DEBUG("Parsed request: " + ToString(req.Method()) + " " + req.Path() + " " + req.Version());

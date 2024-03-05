@@ -7,7 +7,9 @@
 
 namespace KWS {
 
+namespace TCP {
 class TcpStream;
+}
 
 class HttpRequest
 {
@@ -15,7 +17,7 @@ class HttpRequest
     HttpRequest() = default;
     HttpRequest(HttpMethod method, std::string path);
 
-    static HttpRequest ParseFrom(TcpStream& stream);
+    static HttpRequest ParseFrom(TCP::TcpStream& stream);
 
     HttpMethod Method() const;
     std::string Path() const;
@@ -23,8 +25,8 @@ class HttpRequest
     std::string Header(const std::string& header) const;
 
   private:
-    static void ParseRequestLine(HttpRequest& req, TcpStream& stream);
-    static void ParseHeaders(HttpRequest& req, TcpStream& stream);
+    static void ParseRequestLine(HttpRequest& req, TCP::TcpStream& stream);
+    static void ParseHeaders(HttpRequest& req, TCP::TcpStream& stream);
 
     HttpMethod method_;
     std::string path_;

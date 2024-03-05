@@ -13,7 +13,7 @@ class HttpResponse;
 class HttpRoute;
 class TcpStream;
 
-class HttpServerImpl : public TcpServer
+class HttpServerImpl : public TCP::TcpServer
 {
   public:
     using Handler = std::function<HttpResponse(const HttpRequest&)>;
@@ -24,7 +24,7 @@ class HttpServerImpl : public TcpServer
     void RegisterErrorHandler(HttpStatusCode code, Handler handler);
 
   protected:
-    void HandleClient(TcpStream& strm) override;
+    void HandleClient(TCP::TcpStream& strm) override;
 
   private:
     Router router;

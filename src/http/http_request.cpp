@@ -11,7 +11,7 @@ HttpRequest::HttpRequest(HttpMethod method, std::string path)
   , path_(std::move(path))
 {}
 
-HttpRequest HttpRequest::ParseFrom(TcpStream& stream)
+HttpRequest HttpRequest::ParseFrom(TCP::TcpStream& stream)
 {
     HttpRequest req;
 
@@ -48,7 +48,7 @@ std::string HttpRequest::Header(const std::string& header) const
     return header_it->second;
 }
 
-void HttpRequest::ParseRequestLine(HttpRequest& req, TcpStream& stream)
+void HttpRequest::ParseRequestLine(HttpRequest& req, TCP::TcpStream& stream)
 {
     auto request_line = stream.ReceiveLine();
     std::istringstream iss{request_line};
@@ -59,7 +59,7 @@ void HttpRequest::ParseRequestLine(HttpRequest& req, TcpStream& stream)
     req.method_ = ToHttpMethod(method);
 }
 
-void HttpRequest::ParseHeaders(HttpRequest& req, TcpStream& stream)
+void HttpRequest::ParseHeaders(HttpRequest& req, TCP::TcpStream& stream)
 {
     const std::string DELIM = ": ";
 

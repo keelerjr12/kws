@@ -4,13 +4,15 @@
 #include <optional>
 #include <string>
 #include <string_view>
+#include "tcp_socket.h"
 
-namespace KWS {
+namespace KWS::TCP {
+
 
 class TcpStream
 {
   public:
-    TcpStream(int sockfd);
+    TcpStream(const TcpSocket& socket);
 
     std::string ReceiveLine();
 
@@ -20,7 +22,7 @@ class TcpStream
     std::optional<std::string> FindExistingLine();
     std::string ReadDataUntilLineFound();
 
-    int sockfd_;
+    TcpSocket socket_;
     std::string msg_;
     std::string::size_type last_pos_ = 0;
 
