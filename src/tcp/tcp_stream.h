@@ -8,7 +8,6 @@
 
 namespace KWS::TCP {
 
-
 class TcpStream
 {
   public:

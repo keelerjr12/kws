@@ -11,7 +11,7 @@ HttpResponse Router::Execute(const HttpRequest& req) const
 {
     if (!HandlerExists({req.Method(), req.Path()}))
     {
-        LOG_DEBUG(ToString(req.Method()) + " " + req.Path() + " not found");
+        LOG_DEBUG("{0} {1} not found", ToString(req.Method()), req.Path());
         return HttpResponse{HttpStatusCode::NOT_FOUND,
                             "404 -- Resource Not Found"};
     }

@@ -23,7 +23,7 @@ int main()
         http.RegisterRoute({KWS::HttpMethod::GET, "/users/{id}/profile"},
                            IndexHandler);
 
-        http.RegisterErrorHandler(KWS::HttpStatusCode::BAD_REQUEST,
+        http.RegisterErrorHandler(KWS::HttpStatusCode::NOT_FOUND,
                                   ErrorHandler);
 
         std::cout << "Listening on " << HOST << " " << PORT << "\n";

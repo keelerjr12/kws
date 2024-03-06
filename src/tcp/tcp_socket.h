@@ -18,7 +18,6 @@ class TcpSocket
     void Bind(const std::string host, int port);
     void Listen(int backlog) const;
 
-    // TODO: make this a client socket
     TcpSocket Accept() const;
 
     void Send(std::string_view data) const;

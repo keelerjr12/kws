@@ -40,7 +40,7 @@ std::optional<std::string> TcpStream::FindExistingLine()
             msg_.substr(last_pos_, end_line + MESSAGE_DELIM.size() - last_pos_);
         last_pos_ = end_line + MESSAGE_DELIM.size();
 
-        LOG_DEBUG("Existing line found: " + line);
+        LOG_DEBUG("Existing line found: {0}", line);
         return line;
     }
 
@@ -49,7 +49,8 @@ std::optional<std::string> TcpStream::FindExistingLine()
 
 std::string TcpStream::ReadDataUntilLineFound()
 {
-    LOG_DEBUG("TCP stream being read...");
+    // TODO: this needs to be fixed!
+    LOG_DEBUG("TCP stream being read...", nullptr);
 
     // TODO: make this a member variable
     std::array<char, BUF_SIZE> buf = {0};
