@@ -11,7 +11,7 @@ class TcpStream;
 class TcpServer
 {
   public:
-    TcpServer(const std::string& host, int port);
+    TcpServer(std::string host, int port);
 
     virtual ~TcpServer() = default;
 

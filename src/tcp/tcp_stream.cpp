@@ -49,8 +49,7 @@ std::optional<std::string> TcpStream::FindExistingLine()
 
 std::string TcpStream::ReadDataUntilLineFound()
 {
-    // TODO: this needs to be fixed!
-    LOG_DEBUG("TCP stream being read...", nullptr);
+    LOG_DEBUG("TCP stream being read...");
 
     // TODO: make this a member variable
     std::array<char, BUF_SIZE> buf = {0};
