@@ -42,7 +42,7 @@ BraceWrapping:
   SplitEmptyRecord: false
   SplitEmptyNamespace: false
 BreakBeforeTernaryOperators: true
-BreakConstructorInitializers: AfterComma
+BreakConstructorInitializers: AfterColon
 BreakStringLiterals: false
 ColumnLimit: 80
 CompactNamespaces: false

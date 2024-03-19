@@ -3,7 +3,7 @@
 
 #include <string>
 
-namespace KWS {
+namespace KWS::Http {
 
 enum class HttpMethod
 {
@@ -19,6 +19,6 @@ std::string toUpper(std::string str);
 HttpMethod ToHttpMethod(const std::string& str);
 std::string ToString(HttpMethod method);
 
-}  // namespace KWS
+}  // namespace KWS::Http
 
 #endif  // HTTP_METHOD_H

@@ -5,16 +5,14 @@
 
 namespace KWS::TCP {
 
-TcpSocket::TcpSocket(int sockfd)
-  : sockfd_(sockfd)
-{}
+TcpSocket::TcpSocket(int sockfd) : sockfd_(sockfd) {}
 
 TcpSocket::~TcpSocket()
 {
     close(sockfd_);
 }
 
-void TcpSocket::Bind(const std::string host, int port)
+void TcpSocket::Bind(const std::string& host, int port)
 {
     host_ = host;
     port_ = port;

@@ -41,6 +41,11 @@ install(TARGETS ${LIB_NAME}
         PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${LIB_NAME}
 )
 
+  target_link_libraries(
+    ${LIB_NAME}
+    gcov 
+  )
+
 if (BUILD_TESTS)
   message(STATUS "Testing is on")
 
@@ -61,7 +66,7 @@ if (BUILD_TESTS)
 
   target_link_libraries(
     ${TEST_PROJ}
-    kws
+    kws 
     GTest::gtest_main
   )
 

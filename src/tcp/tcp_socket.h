@@ -15,7 +15,7 @@ class TcpSocket
 
     ~TcpSocket();
 
-    void Bind(const std::string host, int port);
+    void Bind(const std::string& host, int port);
     void Listen(int backlog) const;
 
     TcpSocket Accept() const;
@@ -27,7 +27,7 @@ class TcpSocket
 
   private:
     std::string host_;
-    int port_;
+    int port_{};
 
     int sockfd_;
 };

@@ -1,10 +1,10 @@
 #ifndef TCP_STREAM
 #define TCP_STREAM
 
+#include "tcp_socket.h"
 #include <optional>
 #include <string>
 #include <string_view>
-#include "tcp_socket.h"
 
 namespace KWS::TCP {
 
@@ -29,6 +29,6 @@ class TcpStream
     constexpr static auto BUF_SIZE = 512;
 };
 
-}  // namespace KWS
+}  // namespace KWS::TCP
 
 #endif  // TCP_STREAM

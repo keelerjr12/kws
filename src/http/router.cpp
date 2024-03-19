@@ -3,158 +3,66 @@
 #include <kws/http_request.h>
 #include <kws/http_response.h>
 #include <kws/http_route.h>
+#include <optional>
 #include <stdexcept>
 
-namespace KWS {
+namespace KWS::Http {
 
-HttpResponse Router::Execute(const HttpRequest& req) const
+HttpResponse Router::Execute(HttpRequest& req) const
 {
-    if (!HandlerExists({req.Method(), req.Path()}))
+    // Get Route Template
+    const auto routeTemplate = FindRouteTemplate(req.Method(), req.Path());
+
+    if (!routeTemplate)
     {
         LOG_DEBUG("{0} {1} not found", ToString(req.Method()), req.Path());
         return HttpResponse{HttpStatusCode::NOT_FOUND,
                             "404 -- Resource Not Found"};
     }
+    // Parameterize request
+    const auto params = routeTemplate->ExtractParams(req.Path());
+    for (const auto& [key, value] : params)
+    {
+        LOG_ERROR("{0} {1}", key, value);
+        req.AddRouteValue(key, value);
+    }
 
-    const auto handler = GetHandler({req.Method(), req.Path()});
-
+    // Get Handler
+    const auto handler = handlers_.find(*routeTemplate)->second;
+    // Call Handler w/request
     return handler(req);
 }
 
-void Router::RegisterRoute(const HttpRoute& route, Handler handler)
+void Router::RegisterRoute(const HttpRoute& route, const Handler& handler)
 {
-    if (HandlerExists(route))
+    const auto routeTemplate = FindRouteTemplate(route.Method(), route.Path());
+
+    if (routeTemplate)
     {
         throw std::invalid_argument("[Error]: HttpRoute already exists\n");
     }
 
-    handlers_.insert({route, std::move(handler)});
+    handlers_.insert({{route.Method(), route.Path()}, handler});
 }
 
-void Router::RegisterErrorHandler(HttpStatusCode code, Handler handler)
+void Router::RegisterErrorHandler(HttpStatusCode code, const Handler& handler)
 {
-    error_handlers_.insert({code, std::move(handler)});
+    error_handlers_.insert({code, handler});
 }
 
-bool Router::HandlerExists(const HttpRoute& route) const
+std::optional<RouteTemplate>
+Router::FindRouteTemplate(const HttpMethod& method,
+                          const std::string& path) const
 {
-    return handlers_.find(route) != std::end(handlers_);
-}
-
-std::string LStrip(const std::string& str, char chr = ' ')
-{
-    const auto loc = str.find_first_not_of(chr);
-
-    if (loc == std::string::npos)
+    for (const auto& [routeTemplate, handler] : handlers_)
     {
-        return "";
-    }
-
-    return str.substr(loc);
-}
-
-std::string RStrip(const std::string& str, char chr = ' ')
-{
-    const auto loc = str.find_last_not_of(chr);
-
-    if (loc == std::string::npos)
-    {
-        return "";
-    }
-
-    return str.substr(0, loc + 1);
-}
-
-std::string Strip(const std::string& str, char chr = ' ')
-{
-    auto stripped_str = LStrip(str, chr);
-    stripped_str = RStrip(stripped_str, chr);
-
-    return stripped_str;
-}
-
-// TODO: move this!
-std::vector<std::string> Tokenize(std::string url)
-{
-    std::vector<std::string> segments;
-
-    url = Strip(url, '/');
-
-    auto loc = url.find('/');
-
-    while (loc != std::string::npos)
-    {
-        const auto segment = url.substr(0, loc);
-        segments.push_back(segment);
-
-        url = url.substr(loc + 1);
-        loc = url.find('/');
-    }
-
-    segments.push_back(url);
-
-    return segments;
-}
-
-bool IsParameter(const std::string& segment)
-{
-    return !segment.empty() && segment.front() == '{' && segment.back() == '}';
-}
-
-bool AreEqual(const std::vector<std::string>& lhs,
-              const std::vector<std::string>& rhs)
-{
-    if (lhs.size() != rhs.size())
-    {
-        return false;
-    }
-
-    for (std::size_t i = 0; i < lhs.size(); ++i)
-    {
-        if (IsParameter(rhs[i]))
+        if (routeTemplate.Matches(path, method))
         {
-            continue;
-        }
-
-        if (lhs[i] != rhs[i])
-        {
-            return false;
+            return routeTemplate;
         }
     }
 
-    return true;
-}
-
-Router::Handler Router::GetHandler(const HttpRoute& route) const
-{
-    /*const auto route_handler_it = handlers_.find(route);
-    return route_handler_it->second;*/
-
-    const auto route_segments = Tokenize(route.Path());
-
-    /*for (const auto& segment : route_segments) {
-      std::cout << segment << "--";
-    }
-
-    std::cout << std::endl;*/
-
-    for (const auto& handler : handlers_)
-    {
-        const auto handler_segments = Tokenize(handler.first.Path());
-
-        /*for (const auto& segment : handler_segments) {
-        std::cout << segment << "--";
-      }
-
-      std::cout << std::endl;*/
-
-        if (AreEqual(route_segments, handler_segments))
-        {
-            return handler.second;
-        }
-    }
-
-    throw std::runtime_error("[ERROR]: No handler found");
+    return {};
 }
 
 Router::Handler Router::GetErrorHandler(HttpStatusCode code) const
@@ -163,4 +71,4 @@ Router::Handler Router::GetErrorHandler(HttpStatusCode code) const
     return err_handler_it->second;
 }
 
-}  // namespace KWS
+}  // namespace KWS::Http

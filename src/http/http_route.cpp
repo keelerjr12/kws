@@ -1,10 +1,6 @@
 #include <kws/http_route.h>
 
-namespace KWS {
+namespace KWS::Http {
 
-bool operator==(const HttpRoute& lhs, const HttpRoute& rhs)
-{
-    return lhs.Method() == rhs.Method() && lhs.Path() == rhs.Path();
-}
 
-}  // namespace KWS
+}  // namespace KWS::Http

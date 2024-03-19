@@ -1,11 +1,11 @@
-#include <kws/http_server.h>
 #include "http_server_impl.h"
+#include <kws/http_server.h>
 #include <memory>
 
-namespace KWS {
+namespace KWS::Http {
 
-HttpServer::HttpServer(const char* host, int port)
-  : impl_(std::make_unique<HttpServerImpl>(host, port))
+HttpServer::HttpServer(const std::string& host, const int port) :
+  impl_(std::make_unique<KWS::Http::HttpServerImpl>(host, port))
 {}
 
 HttpServer::~HttpServer() = default;
@@ -15,14 +15,14 @@ void HttpServer::Serve()
     impl_->Serve();
 }
 
-void HttpServer::RegisterRoute(const HttpRoute& route, Handler handler)
+void HttpServer::RegisterRoute(const HttpRoute& route, const Handler& handler)
 {
-    impl_->RegisterRoute(route, std::move(handler));
+    impl_->RegisterRoute(route, handler);
 }
 
-void HttpServer::RegisterErrorHandler(HttpStatusCode code, Handler handler)
+void HttpServer::RegisterErrorHandler(HttpStatusCode code, const Handler& handler)
 {
-    impl_->RegisterErrorHandler(code, std::move(handler));
+    impl_->RegisterErrorHandler(code, handler);
 }
 
-}  // namespace KWS
+}  // namespace KWS::Http

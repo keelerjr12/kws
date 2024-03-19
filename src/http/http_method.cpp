@@ -1,9 +1,9 @@
-#include <kws/http_method.h>
 #include <algorithm>
+#include <kws/http_method.h>
 #include <stdexcept>
 #include <unordered_map>
 
-namespace KWS {
+namespace KWS::Http {
 
 static const std::unordered_map<std::string, HttpMethod>& GetHttpMethodMap()
 {
@@ -55,4 +55,4 @@ std::string ToString(HttpMethod method)
     throw std::invalid_argument("Method cannot be converted to a string");
 }
 
-}  // namespace KWS
+}  // namespace KWS::Http

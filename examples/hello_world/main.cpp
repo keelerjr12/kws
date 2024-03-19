@@ -8,25 +8,28 @@
 const auto HOST = "127.0.0.1";
 const auto PORT = 8080;
 
-KWS::HttpResponse IndexHandler(const KWS::HttpRequest& req);
-KWS::HttpResponse ErrorHandler(const KWS::HttpRequest& req);
+KWS::Http::HttpResponse IndexHandler(const KWS::Http::HttpRequest& req);
+KWS::Http::HttpResponse ErrorHandler(const KWS::Http::HttpRequest& req);
 
 int main()
 {
     try
     {
         std::cout << "Starting server\n";
-        KWS::HttpServer http(HOST, PORT);
+        KWS::Http::HttpServer http(HOST, PORT);
 
-        http.RegisterRoute({KWS::HttpMethod::GET, "/"}, IndexHandler);
-        http.RegisterRoute({KWS::HttpMethod::GET, "/users/{id}"}, IndexHandler);
-        http.RegisterRoute({KWS::HttpMethod::GET, "/users/{id}/profile"},
+        http.RegisterRoute({KWS::Http::HttpMethod::GET, "/"}, IndexHandler);
+        http.RegisterRoute({KWS::Http::HttpMethod::GET, "/users"},
+                           IndexHandler);
+        http.RegisterRoute({KWS::Http::HttpMethod::GET, "/users/{id}"},
+                           IndexHandler);
+        http.RegisterRoute({KWS::Http::HttpMethod::GET, "/users/{id}/profile"},
                            IndexHandler);
 
-        http.RegisterErrorHandler(KWS::HttpStatusCode::NOT_FOUND,
+        http.RegisterErrorHandler(KWS::Http::HttpStatusCode::NOT_FOUND,
                                   ErrorHandler);
 
-        std::cout << "Listening on " << HOST << " " << PORT << "\n";
+        std::cout << "Listening on " << HOST << " " << PORT << '\n';
         http.Serve();
 
         std::cout << "Shutting down server\n";
@@ -39,12 +42,13 @@ int main()
     return 0;
 }
 
-KWS::HttpResponse IndexHandler(const KWS::HttpRequest& req)
+KWS::Http::HttpResponse IndexHandler(const KWS::Http::HttpRequest& req)
 {
     std::cout << "---- REQUEST START  ----\n";
     std::cout << ToString(req.Method()) << " " << req.Path() << " "
-              << req.Version() << std::endl;
-    std::cout << req.Header("Host") << std::endl;
+              << req.Version() << '\n';
+    std::cout << req.Header("Host") << '\n';
+    std::cout << req.RouteValue<std::string>("id") << '\n';
     std::cout << "---- REQUEST END  ----\n";
 
     std::string resp = "  \
@@ -54,10 +58,11 @@ KWS::HttpResponse IndexHandler(const KWS::HttpRequest& req)
     </body>             \
   </html>";
 
-    return {KWS::HttpStatusCode::OK, resp};
+    return {KWS::Http::HttpStatusCode::OK, resp};
 }
 
-KWS::HttpResponse ErrorHandler([[maybe_unused]] const KWS::HttpRequest& req)
+KWS::Http::HttpResponse
+ErrorHandler([[maybe_unused]] const KWS::Http::HttpRequest& req)
 {
-    return {KWS::HttpStatusCode::BAD_REQUEST, "404: Bad request!"};
+    return {KWS::Http::HttpStatusCode::BAD_REQUEST, "404: Bad request!"};
 }

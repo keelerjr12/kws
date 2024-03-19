@@ -7,109 +7,129 @@
 
 namespace {
 
-class RouterTest : public testing::TestWithParam<std::string> {};
+class RouterTest : public testing::TestWithParam<std::string>
+{};
 
-constexpr std::array<std::string, 3> route_patterns = {"/", "/first",
-                                                       "/first/second"};
-INSTANTIATE_TEST_SUITE_P(RoutePatterns, RouterTest,
+constexpr std::array<std::string, 4> route_patterns = {"/",
+                                                       "/first",
+                                                       "/first/second",
+                                                       "/first/{id}"};
+INSTANTIATE_TEST_SUITE_P(RoutePatterns,
+                         RouterTest,
                          testing::ValuesIn(route_patterns));
 
-TEST_P(RouterTest, EmptyRouterRouteNonexistentReturnsNotFound) {
-  KWS::Router router;
-  KWS::HttpRequest request{KWS::HttpMethod::GET, RouterTest::GetParam()};
+TEST_P(RouterTest, EmptyRouter_RouteNonexistent_ReturnsNotFound)
+{
+    KWS::Http::Router router;
+    KWS::Http::HttpRequest request{KWS::Http::HttpMethod::GET, GetParam()};
 
-  const auto resp = router.Execute(request);
+    const auto resp = router.Execute(request);
 
-  ASSERT_EQ(resp.Status(), KWS::HttpStatusCode::NOT_FOUND);
+    ASSERT_EQ(resp.Status(), KWS::Http::HttpStatusCode::NOT_FOUND);
 }
 
-TEST_P(RouterTest, SingleRouteDefinitionRouteNonexistentReturnsNotFound) {
-  KWS::Router router;
-  KWS::HttpRequest request{KWS::HttpMethod::GET, RouterTest::GetParam()};
+TEST_P(RouterTest, SingleRouteDefinition_RouteNonexistent_ReturnsNotFound)
+{
+    KWS::Http::Router router;
+    KWS::Http::HttpRequest request{KWS::Http::HttpMethod::GET, GetParam()};
 
-  router.RegisterRoute({KWS::HttpMethod::GET, "/dummy"},
-                       []([[maybe_unused]] const KWS::HttpRequest &req) {
-                         return KWS::HttpResponse{KWS::HttpStatusCode::OK, ""};
-                       });
-  const auto resp = router.Execute(request);
-
-  ASSERT_EQ(resp.Status(), KWS::HttpStatusCode::NOT_FOUND);
-}
-
-TEST_P(RouterTest, SingleRouteDefinitionRouteExistsDoesNotThrowException) {
-  KWS::Router router;
-  KWS::HttpRequest request{KWS::HttpMethod::GET, RouterTest::GetParam()};
-
-  router.RegisterRoute({KWS::HttpMethod::GET, RouterTest::GetParam()},
-                       []([[maybe_unused]] const KWS::HttpRequest &req) {
-                         return KWS::HttpResponse{KWS::HttpStatusCode::OK, ""};
-                       });
-
-  ASSERT_NO_THROW(router.Execute(request));
-}
-
-TEST_P(RouterTest, MultipleRouteDefinitionsRouteExistsDoesNotThrowException) {
-  KWS::Router router;
-  KWS::HttpRequest request{KWS::HttpMethod::GET, RouterTest::GetParam()};
-
-  for (const auto &route : route_patterns) {
     router.RegisterRoute(
-        {KWS::HttpMethod::GET, route},
-        []([[maybe_unused]] const KWS::HttpRequest &req) {
-          return KWS::HttpResponse{KWS::HttpStatusCode::OK, ""};
+        {KWS::Http::HttpMethod::GET, "/dummy"},
+        []([[maybe_unused]] const KWS::Http::HttpRequest& req) {
+            return KWS::Http::HttpResponse{KWS::Http::HttpStatusCode::OK, ""};
         });
-  }
+    const auto resp = router.Execute(request);
 
-  ASSERT_NO_THROW(router.Execute(request));
+    ASSERT_EQ(resp.Status(), KWS::Http::HttpStatusCode::NOT_FOUND);
 }
 
-TEST_P(RouterTest, SingleRouteDefinitionRouteExistsFunctionCalled) {
-  KWS::Router router;
-  KWS::HttpRequest request{KWS::HttpMethod::GET, RouterTest::GetParam()};
-  bool isCalled = false;
-  ;
-  router.RegisterRoute({KWS::HttpMethod::GET, RouterTest::GetParam()},
-                       [&]([[maybe_unused]] const KWS::HttpRequest &req) {
-                         isCalled = true;
-                         return KWS::HttpResponse{KWS::HttpStatusCode::OK, ""};
-                       });
+TEST_P(RouterTest, SingleRouteDefinition_RouteExists_DoesNotThrowException)
+{
+    KWS::Http::Router router;
+    KWS::Http::HttpRequest request{KWS::Http::HttpMethod::GET, GetParam()};
 
-  router.Execute(request);
-
-  ASSERT_TRUE(isCalled);
-}
-
-TEST_P(RouterTest, MultipleRouteDefinitionRouteExistsFunctionCalled) {
-  KWS::Router router;
-  KWS::HttpRequest request{KWS::HttpMethod::GET, RouterTest::GetParam()};
-  bool isCalled = false;
-  ;
-
-  for (const auto &route : route_patterns) {
+    std::cout << GetParam() << std::endl;
     router.RegisterRoute(
-        {KWS::HttpMethod::GET, route},
-        [&]([[maybe_unused]] const KWS::HttpRequest &req) {
-          isCalled = true;
-          return KWS::HttpResponse{KWS::HttpStatusCode::OK, ""};
+        {KWS::Http::HttpMethod::GET, GetParam()},
+        []([[maybe_unused]] const KWS::Http::HttpRequest& req) {
+            return KWS::Http::HttpResponse{KWS::Http::HttpStatusCode::OK, ""};
         });
-  }
 
-  router.Execute(request);
-
-  ASSERT_TRUE(isCalled);
+    ASSERT_NO_THROW(router.Execute(request));
 }
 
-TEST_P(RouterTest, SingleRouteDefinitionRouteExists200StatusReturned) {
-  KWS::Router router;
-  KWS::HttpRequest request{KWS::HttpMethod::GET, RouterTest::GetParam()};
-  router.RegisterRoute({KWS::HttpMethod::GET, RouterTest::GetParam()},
-                       []([[maybe_unused]] const KWS::HttpRequest &req) {
-                         return KWS::HttpResponse{KWS::HttpStatusCode::OK, ""};
-                       });
+TEST_P(RouterTest, SingleRouteDefinition_RouteExists_FunctionCalled)
+{
+    KWS::Http::Router router;
+    KWS::Http::HttpRequest request{KWS::Http::HttpMethod::GET, GetParam()};
+    bool isCalled = false;
+    ;
+    router.RegisterRoute(
+        {KWS::Http::HttpMethod::GET, GetParam()},
+        [&]([[maybe_unused]] const KWS::Http::HttpRequest& req) {
+            isCalled = true;
+            return KWS::Http::HttpResponse{KWS::Http::HttpStatusCode::OK, ""};
+        });
 
-  const auto resp = router.Execute(request);
+    router.Execute(request);
 
-  ASSERT_EQ(resp.Status(), KWS::HttpStatusCode::OK);
+    ASSERT_TRUE(isCalled);
 }
 
-} // namespace
+TEST_P(RouterTest, SingleRouteDefinition_RouteExists_200StatusReturned)
+{
+    KWS::Http::Router router;
+    KWS::Http::HttpRequest request{KWS::Http::HttpMethod::GET, GetParam()};
+    router.RegisterRoute(
+        {KWS::Http::HttpMethod::GET, GetParam()},
+        []([[maybe_unused]] const KWS::Http::HttpRequest& req) {
+            return KWS::Http::HttpResponse{KWS::Http::HttpStatusCode::OK, ""};
+        });
+
+    const auto resp = router.Execute(request);
+
+    ASSERT_EQ(resp.Status(), KWS::Http::HttpStatusCode::OK);
+}
+
+TEST_P(RouterTest, MultipleRouteDefinitions_RouteExists_DoesNotThrowException)
+{
+    KWS::Http::Router router;
+    KWS::Http::HttpRequest request{KWS::Http::HttpMethod::GET, GetParam()};
+
+    for (const auto& route : route_patterns)
+    {
+        router.RegisterRoute(
+            {KWS::Http::HttpMethod::GET, route},
+            []([[maybe_unused]] const KWS::Http::HttpRequest& req) {
+                return KWS::Http::HttpResponse{KWS::Http::HttpStatusCode::OK,
+                                               ""};
+            });
+    }
+
+    ASSERT_NO_THROW(router.Execute(request));
+}
+
+TEST_P(RouterTest, MultipleRouteDefinition_RouteExists_FunctionCalled)
+{
+    KWS::Http::Router router;
+    KWS::Http::HttpRequest request{KWS::Http::HttpMethod::GET, GetParam()};
+    bool isCalled = false;
+    ;
+
+    for (const auto& route : route_patterns)
+    {
+        router.RegisterRoute(
+            {KWS::Http::HttpMethod::GET, route},
+            [&]([[maybe_unused]] const KWS::Http::HttpRequest& req) {
+                isCalled = true;
+                return KWS::Http::HttpResponse{KWS::Http::HttpStatusCode::OK,
+                                               ""};
+            });
+    }
+
+    router.Execute(request);
+
+    ASSERT_TRUE(isCalled);
+}
+
+}  // namespace

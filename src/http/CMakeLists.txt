@@ -7,6 +7,7 @@ target_sources(${LIB_NAME} PUBLIC
   http_route.cpp
   http_server.cpp
   router.cpp
+  route_template.cpp
 )
 
 file(GLOB TEST_SOURCES *.test.cpp)

@@ -4,7 +4,7 @@
 #include <kws/http_status_code.h>
 #include <string>
 
-namespace KWS {
+namespace KWS::Http {
 
 class HttpResponse
 {
@@ -20,6 +20,6 @@ class HttpResponse
     HttpStatusCode statusCode_;
 };
 
-}  // namespace KWS
+}  // namespace KWS::Http
 
 #endif  // HTTP_RESPONSE_H

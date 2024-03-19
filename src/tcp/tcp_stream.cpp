@@ -8,9 +8,7 @@
 
 namespace KWS::TCP {
 
-TcpStream::TcpStream(const TcpSocket& socket)
-  : socket_(socket)
-{}
+TcpStream::TcpStream(const TcpSocket& socket) : socket_(socket) {}
 
 std::string TcpStream::ReceiveLine()
 {

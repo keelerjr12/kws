@@ -1,14 +1,15 @@
-#include <kws/http_request.h>
-#include <kws/http_method.h>
 #include "../tcp/tcp_stream.h"
+#include <kws/http_method.h>
+#include <kws/http_request.h>
 #include <sstream>
 #include <stdexcept>
+#include <string>
+#include <string_view>
 
-namespace KWS {
+namespace KWS::Http {
 
-HttpRequest::HttpRequest(HttpMethod method, std::string path)
-  : method_(method)
-  , path_(std::move(path))
+HttpRequest::HttpRequest(HttpMethod method, std::string path) :
+  method_(method), path_(std::move(path))
 {}
 
 HttpRequest HttpRequest::ParseFrom(TCP::TcpStream& stream)
@@ -48,6 +49,12 @@ std::string HttpRequest::Header(const std::string& header) const
     return header_it->second;
 }
 
+void HttpRequest::AddRouteValue(const std::string& param,
+                                const std::string& value)
+{
+    params_.insert({param, value});
+}
+
 void HttpRequest::ParseRequestLine(HttpRequest& req, TCP::TcpStream& stream)
 {
     auto request_line = stream.ReceiveLine();
@@ -77,4 +84,4 @@ void HttpRequest::ParseHeaders(HttpRequest& req, TCP::TcpStream& stream)
     }
 }
 
-}  // namespace KWS
+}  // namespace KWS::Http

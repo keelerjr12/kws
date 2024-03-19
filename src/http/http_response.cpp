@@ -2,10 +2,10 @@
 #include <kws/http_status_code.h>
 #include <string>
 
-namespace KWS {
+namespace KWS::Http {
 
-HttpResponse::HttpResponse(HttpStatusCode statusCode, std::string body)
-  : body_(std::move(body)), statusCode_(statusCode)
+HttpResponse::HttpResponse(HttpStatusCode statusCode, std::string body) :
+  body_(std::move(body)), statusCode_(statusCode)
 {}
 
 HttpStatusCode HttpResponse::Status() const
@@ -24,4 +24,4 @@ std::string HttpResponse::Serialize() const
     return resp;
 }
 
-}  // namespace KWS
+}  // namespace KWS::Http
